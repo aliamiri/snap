@@ -8,8 +8,8 @@ int main(int argc, char* argv[]) {
 
   Try
   Env = TEnv(argc, argv, TNotify::StdNotify);
-  const TStr InFNm = Env.GetIfArgPrefixStr("-i:", "../as20graph.txt", "Input graph file (single directed edge per line)");
-  TStr OutFNm = Env.GetIfArgPrefixStr("-o:", "", "Output file prefix");
+  const TStr InFNm = Env.GetIfArgPrefixStr("-i:", "in.txt", "Input graph file (single directed edge per line)");
+  TStr OutFNm = Env.GetIfArgPrefixStr("-o:", "outputfile.out", "Output file prefix");
   const TInt NZero = Env.GetIfArgPrefixInt("-n0:", 2, "Initiator matrix size");
   const TStr InitMtx = Env.GetIfArgPrefixStr("-m:", "0.9 0.7; 0.5 0.2", "Init Gradient Descent Matrix (R=random)").GetLc();
   const TInt GradIter = Env.GetIfArgPrefixInt("-gi:", 5, "Gradient descent iterations for M-step");
@@ -51,6 +51,10 @@ int main(int argc, char* argv[]) {
   KronLL.RunKronEM(EMIter, GradIter, LrnRate, MnStep, MxStep, WarmUp, WarmUp, NSamples);
 
   const TKronMtx& FitMtx = KronLL.GetProbMtx();
+
+  KronLL.TestKronDescent(true,true,LrnRate,WarmUp,NSamples,InitKronMtx);
+
+
   FILE *F = fopen(TStr::Fmt("KronEM-%s.tab", InFNm.GetFMid().CStr()).CStr(), "at");
   fprintf(F, "Input\t%s\n", InFNm.CStr());
   TStrV ParamV; Env.GetCmLn().SplitOnAllCh(' ', ParamV);
